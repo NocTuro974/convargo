@@ -153,6 +153,11 @@ function calculatePrice()
     var ppk;
     var ppv;
     var calculatedPrice;
+    var commission;
+    var partInsurance;
+    var partTreasury;
+    var partConvargo;
+
     for(var t = 0; t < truckers.length; t++)
     {
       if(truckers[t].id == deliveries[d].truckerId)
@@ -175,8 +180,33 @@ function calculatePrice()
       }
     }
     calculatedPrice = ppk * deliveries[d].distance + ppv * deliveries[d].volume;
-    console.log("calculated price : " + calculatedPrice);
     deliveries[d].price = calculatedPrice;
+    console.log("calculated price : " + calculatedPrice);
+
+    commission = 0.3 * calculatedPrice
+    console.log("commission (30%) is : " + commission)
+
+    partInsurance = 0.5 * commission
+    console.log("the insurance part is " + partInsurance)
+    deliveries[d].commission.insurance = partInsurance
+
+    if (deliveries[d].distance < 500)
+    {
+      partTreasury = 1
+      deliveries[d].commission.treasury = partTreasury
+    }
+    else
+    {
+      var reste = deliveries[d].distance % 500
+      partTreasury = (deliveries[d].distance - reste) / 500
+      deliveries[d].commission.treasury = partTreasury;
+    }
+    console.log("the treasury part is " + partTreasury)
+
+    partConvargo = commission - partTreasury - partInsurance
+    deliveries[d].commission.convargo = partConvargo;
+    console.log("the convargo part is " + partConvargo)
+    console.log("")
   }
 }
 
